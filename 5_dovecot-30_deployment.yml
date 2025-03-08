@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dovecot
+  namespace: nextcloud
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dovecot
+  template:
+    metadata:
+      labels:
+        app: dovecot
+    spec:
+      nodeSelector:
+        node.kubernetes.io/instance-type: node-k4
+      containers:
+      - name: dovecot
+        image: dovecot/dovecot:latest
+        ports:
+        - containerPort: 143
+          name: imap
+        - containerPort: 993
+          name: imaps
+        volumeMounts:
+        - name: dovecot-config
+          mountPath: /etc/dovecot
+        - name: dovecot-data
+          mountPath: /var/mail
+      volumes:
+      - name: dovecot-config
+        configMap:
+          name: dovecot-config
+      - name: dovecot-data
+        persistentVolumeClaim:
+          claimName: dovecot-pvc

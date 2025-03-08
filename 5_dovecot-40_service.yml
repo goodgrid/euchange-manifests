@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: dovecot
+  namespace: nextcloud
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 143
+    targetPort: 31143
+    name: imap
+  - port: 993
+    targetPort: 31993
+    name: imaps
+  selector:
+    app: dovecot
